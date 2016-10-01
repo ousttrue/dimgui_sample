@@ -2,7 +2,6 @@ import glfw;
 import gui;
 import derelict.imgui.imgui;
 import renderer;
-import std.datetime;
 import std.typecons;
 
 
@@ -59,6 +58,40 @@ void build(T...)(ref Tuple!T data)
 }
 
 
+class FpsClock(int Target, int MarginMsecs = 5)
+{
+	import std.datetime;
+	SysTime m_lastTime;
+
+	immutable auto frameDuration=dur!"msecs"(1000/Target - MarginMsecs);
+
+	this()
+	{
+		m_lastTime=Clock.currTime;
+	}
+
+	Duration newFrame()
+	{
+		auto now=Clock.currTime;
+		auto duration=now-m_lastTime;
+		m_lastTime=now;
+		return duration;
+	}
+
+	void waitNextFrame()
+	{
+		import core.thread;
+
+		auto now=Clock.currTime;
+		auto delta=now-m_lastTime;
+		if(delta < frameDuration)
+		{
+			auto wait=frameDuration-delta;
+			Thread.sleep(wait);
+		}
+	}
+}
+
 void main()
 {
     // window
@@ -92,13 +125,15 @@ void main()
     }
 
     // main loop
-    auto lastTime=Clock.currTime;
-    while (glfw.loop())
+	auto clock=new FpsClock!(30, 5);
+    while (true)
     {
         // time
-        auto currentTime = Clock.currTime;
-        auto delta=(currentTime-lastTime).total!"msecs";
-        lastTime=currentTime;
+		auto delta=clock.newFrame.total!"msecs" * 0.001;
+
+		if(!glfw.loop()){
+			break;
+		}
 
         // update WindowContext
         glfw.updateContext(windowContext, mouseContext);
@@ -119,6 +154,8 @@ void main()
 
         // present
         glfw.flush();
+
+		clock.waitNextFrame();
     }
 
     gui.shutdown();
