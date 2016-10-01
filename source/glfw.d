@@ -1,4 +1,5 @@
 import derelict.glfw3.glfw3;
+import irenderer;
 
 
 extern(C) nothrow void error_callback(int error, const(char)* description)
@@ -49,31 +50,18 @@ class GLFW
 		return true;
 	}
 
-	int[2] getWindowSize()
-	{
-		int[2] size;
-		glfwGetWindowSize(m_window, &size[0], &size[1]);
-		return size;
-	}
+    void updateContext(ref WindowContext w, ref MouseContext m)
+    {
+		glfwGetWindowSize(m_window, &w.window_w, &w.window_h);
+		glfwGetFramebufferSize(m_window, &w.frame_w, &w.frame_h);
+		w.hasFocus=glfwGetWindowAttrib(m_window, GLFW_FOCUSED)!=0;
 
-	int[2] getSize()
-	{
-		int[2] size;
-		glfwGetFramebufferSize(m_window, &size[0], &size[1]);
-		return size;
-	}
-
-	public bool hasFocus()
-	{
-		return glfwGetWindowAttrib(m_window, GLFW_FOCUSED)!=0;
-	}
-
-	double[2] getCursorPos()
-	{
-		double[2] pos;
-		glfwGetCursorPos(m_window, &pos[0], &pos[1]);
-		return pos;
-	}
+		glfwGetCursorPos(m_window, &m.x, &m.y);
+		for(int i=0; i<3; ++i)
+		{
+			m.pressed[i]=glfwGetMouseButton(m_window, i) != 0;
+		}
+    }
 
 	bool loop()
 	{
@@ -82,16 +70,6 @@ class GLFW
 		}
 		glfwPollEvents();
 		return true;
-	}
-
-	double time()
-	{
-		return glfwGetTime();
-	}
-
-	bool mouseDown(int i)
-	{
-		return glfwGetMouseButton(m_window, i) != 0;
 	}
 
 	void setMouseCursor(bool mouseCursor)

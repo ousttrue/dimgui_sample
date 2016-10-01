@@ -4,6 +4,7 @@ DerelictImguiの使用サンプル
 * [D言語でdear imgui (AKA ImGui)](http://qiita.com/ousttrue/items/8dc223ded267edb2e41a)
 
 # 更新履歴
+* [20161001]キーボードコールバック等を実装。コード整理。
 * [20160924].gitignoreに引っかかって登録されていなかかったsubmodules/premake5.exeを追加
 
 # ビルド(Windows10 + visual studio 2015 + dmd + VisualD)

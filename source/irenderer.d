@@ -1,4 +1,23 @@
 
+
+struct WindowContext
+{
+	int frame_w;
+	int frame_h;
+	int window_w;
+	int window_h;
+	bool hasFocus;
+}
+
+struct MouseContext
+{
+	double x;
+	double y;
+	bool enableCursor;
+    bool[3] pressed;
+    float wheel = 0.0f;
+}
+
 interface IRenderer
 {
 	void CreateDeviceObjects(uint vertexSize, uint uvOffset, uint colorOffset);
@@ -11,4 +30,3 @@ interface IRenderer
 					  , uint count, ushort* offset);
 	nothrow void end();
 }
-
