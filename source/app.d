@@ -63,7 +63,7 @@ class FpsClock(int Target, int MarginMsecs = 5)
 	import std.datetime;
 	SysTime m_lastTime;
 
-	immutable auto frameDuration=dur!"msecs"(1000/Target - MarginMsecs);
+	static immutable Duration frameDuration=dur!"msecs"(1000/Target - MarginMsecs);
 
 	this()
 	{
